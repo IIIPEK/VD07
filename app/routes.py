@@ -56,11 +56,15 @@ def logout():
 def edit():
     if not current_user.is_authenticated:
         return redirect(url_for('login'))
-
     form = UpdateAccountForm(obj=current_user)
-    if form.validate_on_submit():
-        current_user.username = form.username.data
-        current_user.email = form.email.data
+    if 'submit' in request.form and form.validate_on_submit():
+        if form.username.data != current_user.username:
+            current_user.username = form.username.data
+        if form.email.data != current_user.email:
+            current_user.email = form.email.data
         db.session.commit()
+        flash('Профиль успешно обновлен', 'success')
         return redirect(url_for('account'))
+    elif form.reset.data:
+        return redirect(url_for('edit'))
     return render_template('edit.html', form=form)

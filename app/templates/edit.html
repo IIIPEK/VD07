@@ -21,7 +21,9 @@
             {% endfor %}
         </div>
         <div>
-            <button type="submit" class="btn btn-primary">Сохранить</button>
+            {{ form.submit(class="btn btn-primary") }}
+            {{ form.reset(class="btn btn-danger") }}
+            <a href="{{ url_for('account') }}" class="btn btn-secondary">Вернуться к профилю</a>
         </div>
     </form>
 {% endblock %}
