@@ -2,7 +2,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from flask import render_template, redirect, url_for, request, flash
 from app import models,forms
 from app.models import User
-from app.forms import RegistrationForm, LoginForm
+from app.forms import RegistrationForm, LoginForm, UpdateAccountForm
 from app import db, app, bcrypt
 
 
@@ -51,3 +51,16 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
+@app.route('/edit', methods=['GET', 'POST'])
+@login_required
+def edit():
+    if not current_user.is_authenticated:
+        return redirect(url_for('login'))
+
+    form = UpdateAccountForm(obj=current_user)
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        db.session.commit()
+        return redirect(url_for('account'))
+    return render_template('edit.html', form=form)
